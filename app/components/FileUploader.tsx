@@ -37,8 +37,8 @@ const FileUploader = ({ onFileSelect }: FileUploaderProps) => {
   const inputProps = getInputProps() as any;
 
   return (
-    <div className="w-full gradient-border">
-      <div {...rootProps}>
+    <div className={`w-full upload-dropzone-wrapper ${isDragActive ? 'drag-active' : ''}`}>
+      <div {...rootProps} className={`upload-dropzone ${isDragActive ? 'drag-active' : ''}`}>
         <input {...inputProps} />
         <div className="space-y-4 cursor-pointer">
           {file ? (
@@ -52,20 +52,20 @@ const FileUploader = ({ onFileSelect }: FileUploaderProps) => {
                   <p className="text-sm text-gray-500">{formatSize(file.size)}</p>
                 </div>
               </div>
-              <button className="p-2 cursor-pointer" onClick={handleRemove}>
+              <button className="p-2 cursor-pointer hover:bg-gray-200 rounded transition-colors" onClick={handleRemove}>
                 <img src="/icons/cross.svg" alt="remove" className="w-4 h-4" />
               </button>
             </div>
           ) : (
-            <div>
-              <div className="mx-auto w-16 h-16 flex items-center justify-center mb-2">
-                <img src="/icons/info.svg" alt="upload" className="size-20" />
+            <div className="py-4">
+              <div className="mx-auto w-16 h-16 flex items-center justify-center mb-3">
+                <img src="/icons/info.svg" alt="upload" className="size-12 opacity-60" />
               </div>
-              <p className="text-lg text-gray-500">
-                <span className="font-semibold">Click to upload</span> or drag and drop
+              <p className="text-base text-gray-700 mb-1">
+                <span className="font-semibold text-gray-900">Click to upload</span> or drag and drop
               </p>
-              <p className="text-lg text-gray-500">
-                PDF (max {formatSize(maxFileSize)})
+              <p className="text-sm text-gray-500">
+                PDF file (max {formatSize(maxFileSize)})
               </p>
             </div>
           )}

@@ -13,16 +13,43 @@ async function loadPdfJs(): Promise<any> {
     if (loadPromise) return loadPromise;
 
     isLoading = true;
-    // @ts-expect-error - pdfjs-dist/build/pdf.mjs is not a module
-    loadPromise = import("pdfjs-dist/build/pdf.mjs").then((lib) => {
-        // Set the worker source to use local file
-        lib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    try {
+        // Import pdfjs-dist - for v5, use the correct import path
+        let lib: any;
+        try {
+            // Try the standard build path first
+            const module = await import("pdfjs-dist/build/pdf.mjs");
+            lib = module.default || module;
+        } catch (e1) {
+            try {
+                // Fallback: try importing from the package root
+                const module = await import("pdfjs-dist");
+                lib = module.default || module;
+            } catch (e2) {
+                // Last resort: try legacy path
+                const module = await import("pdfjs-dist/legacy/build/pdf.mjs");
+                lib = module.default || module;
+            }
+        }
+        
+        // Set the worker source - use absolute URL for Netlify
+        if (lib && lib.GlobalWorkerOptions) {
+            // Use absolute path to ensure worker loads correctly on Netlify
+            const workerPath = typeof window !== 'undefined' 
+                ? `${window.location.origin}/pdf.worker.min.mjs`
+                : "/pdf.worker.min.mjs";
+            lib.GlobalWorkerOptions.workerSrc = workerPath;
+        }
+        
         pdfjsLib = lib;
         isLoading = false;
         return lib;
-    });
-
-    return loadPromise;
+    } catch (err) {
+        isLoading = false;
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        console.error("PDF.js loading error:", errorMessage, err);
+        throw new Error(`Failed to load PDF.js: ${errorMessage}`);
+    }
 }
 
 export async function convertPdfToImage(
