@@ -32,13 +32,12 @@ async function loadPdfJs(): Promise<any> {
             }
         }
         
-        // Set the worker source - use absolute URL for Netlify
+        // Set the worker source - use CDN worker that matches the exact package version
         if (lib && lib.GlobalWorkerOptions) {
-            // Use absolute path to ensure worker loads correctly on Netlify
-            const workerPath = typeof window !== 'undefined' 
-                ? `${window.location.origin}/pdf.worker.min.mjs`
-                : "/pdf.worker.min.mjs";
-            lib.GlobalWorkerOptions.workerSrc = workerPath;
+            // Use CDN worker with exact version to avoid version mismatch
+            // Version 5.4.449 matches the pdfjs-dist package version
+            const pdfjsVersion = "5.4.449";
+            lib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.mjs`;
         }
         
         pdfjsLib = lib;
