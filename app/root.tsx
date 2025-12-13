@@ -28,7 +28,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { init } = usePuterStore();
-  const { isDark } = useDarkMode(); // Initialize dark mode
+  useDarkMode(); // sync <html> theme class with stored preference
 
   useEffect(() => {
     init()

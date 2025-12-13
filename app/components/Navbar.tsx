@@ -1,8 +1,9 @@
 import { Link } from "react-router";
-import { useDarkMode } from "~/lib/useDarkMode";
+import { useThemeStore } from "~/lib/useDarkMode";
 
 const Navbar = () => {
-  const { isDark, toggleDarkMode } = useDarkMode();
+  const isDark = useThemeStore((s) => s.isDark);
+  const toggleDarkMode = useThemeStore((s) => s.toggleDarkMode);
 
   return (
     <nav className="navbar">
