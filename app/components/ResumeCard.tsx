@@ -3,6 +3,7 @@ import ScoreCircle from "~/components/ScoreCircle";
 import {useEffect, useState} from "react";
 import {usePuterStore} from "~/lib/puter";
 
+// Resume type is defined in types/index.d.ts as a global interface
 const ResumeCard = ({ resume: { id, companyName, jobTitle, feedback, imagePath } }: { resume: Resume }) => {
     const { fs } = usePuterStore();
     const [resumeUrl, setResumeUrl] = useState('');

@@ -6,6 +6,7 @@ import {
   AccordionItem,
 } from "./Accordion";
 
+// Feedback type is defined in types/index.d.ts as a global interface
 const ScoreBadge = ({ score }: { score: number }) => {
   return (
       <div

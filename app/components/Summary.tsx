@@ -1,6 +1,7 @@
 import ScoreGauge from "./ScoreGauge";
 import ScoreBadge from "./ScoreBadge";
 
+// Feedback type is defined in types/index.d.ts as a global interface
 const Category = ({ title, score }: { title: string, score: number }) => {
     const textColor = score > 70 ? 'text-green-600'
             : score > 49
