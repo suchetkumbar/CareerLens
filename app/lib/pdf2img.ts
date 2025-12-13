@@ -32,12 +32,20 @@ async function loadPdfJs(): Promise<any> {
             }
         }
         
-        // Set the worker source - use CDN worker that matches the exact package version
+        // Set the worker source - use worker from the package itself to ensure version match
         if (lib && lib.GlobalWorkerOptions) {
-            // Use CDN worker with exact version to avoid version mismatch
-            // Version 5.4.449 matches the pdfjs-dist package version
-            const pdfjsVersion = "5.4.449";
-            lib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsVersion}/pdf.worker.min.mjs`;
+            try {
+                // Use Vite's ?url import to get the worker file URL from node_modules
+                // This ensures the worker version matches the package version
+                const workerModule = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+                const workerUrl = workerModule.default || workerModule;
+                lib.GlobalWorkerOptions.workerSrc = workerUrl;
+            } catch (workerError) {
+                // Fallback: use jsDelivr CDN which has better support for npm packages
+                const pdfjsVersion = "5.4.449";
+                lib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
+                console.warn('Using CDN worker fallback:', workerError);
+            }
         }
         
         pdfjsLib = lib;
